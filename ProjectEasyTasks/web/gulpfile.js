@@ -1,34 +1,60 @@
-var gulp = require('gulp');
-var path = require('path');
-var sass = require('gulp-sass');
-var autoprefixer = require('gulp-autoprefixer');
-var sourcemaps = require('gulp-sourcemaps');
-var open = require('gulp-open');
+var gulp = require('gulp'),
+    concat = require('gulp-concat'),
+    uglify = require('gulp-uglify'),
+    rename = require('gulp-rename'),
+    sass = require('gulp-ruby-sass'),
+    autoprefixer = require('gulp-autoprefixer'),
+    browserSync = require('browser-sync').create();
 
-var Paths = {
-  HERE: './',
-  DIST: 'dist/',
-  CSS: './assets/css/',
-  SCSS_TOOLKIT_SOURCES: './assets/scss/material-dashboard.scss',
-  SCSS: './assets/scss/**/**'
+var DEST = 'build/';
+
+gulp.task('scripts', function() {
+    return gulp.src([
+        'src/js/helpers/*.js',
+        'src/js/*.js',
+      ])
+      .pipe(concat('custom.js'))
+      .pipe(gulp.dest(DEST+'/js'))
+      .pipe(rename({suffix: '.min'}))
+      .pipe(uglify())
+      .pipe(gulp.dest(DEST+'/js'))
+      .pipe(browserSync.stream());
+});
+
+// TODO: Maybe we can simplify how sass compile the minify and unminify version
+var compileSASS = function (filename, options) {
+  return sass('src/scss/*.scss', options)
+        .pipe(autoprefixer('last 2 versions', '> 5%'))
+        .pipe(concat(filename))
+        .pipe(gulp.dest(DEST+'/css'))
+        .pipe(browserSync.stream());
 };
 
-gulp.task('compile-scss', function() {
-  return gulp.src(Paths.SCSS_TOOLKIT_SOURCES)
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(autoprefixer())
-    .pipe(sourcemaps.write(Paths.HERE))
-    .pipe(gulp.dest(Paths.CSS));
+gulp.task('sass', function() {
+    return compileSASS('custom.css', {});
+});
+
+gulp.task('sass-minify', function() {
+    return compileSASS('custom.min.css', {style: 'compressed'});
+});
+
+gulp.task('browser-sync', function() {
+    browserSync.init({
+        server: {
+            baseDir: './'
+        },
+        startPath: './production/index.html'
+    });
 });
 
 gulp.task('watch', function() {
-  gulp.watch(Paths.SCSS, ['compile-scss']);
+  // Watch .html files
+  gulp.watch('production/*.html', browserSync.reload);
+  // Watch .js files
+  gulp.watch('src/js/*.js', ['scripts']);
+  // Watch .scss files
+  gulp.watch('src/scss/*.scss', ['sass', 'sass-minify']);
 });
 
-gulp.task('open', function() {
-  gulp.src('examples/dashboard.html')
-    .pipe(open());
-});
-
-gulp.task('open-app', ['open', 'watch']);
+// Default Task
+gulp.task('default', ['browser-sync', 'watch']);
