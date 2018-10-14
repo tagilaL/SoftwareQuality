@@ -47,7 +47,7 @@
 
               <div class="separator">
                 <p class="change_link">Novo aqui?
-                  <a href="cadastro.html"> Criar conta </a>
+                  <a href="cadastro.jsp"> Criar conta </a>
                 </p>
 
                 <div class="clearfix"></div>

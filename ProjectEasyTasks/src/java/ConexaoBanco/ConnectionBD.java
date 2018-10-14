@@ -12,55 +12,42 @@ import java.sql.SQLException;
  *
  * @author tagil
  */
-public class Conexao {
+public class ConnectionBD {
     
     public static String status = "Não conectou...";
 
-    public Conexao() {
+    public ConnectionBD() {
     }
     
-    public static Connection conectar() {
+    public Connection conectar() {
         
         Connection conn;
         
         try{
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
             
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/easytasks?useTimezone=true&serverTimezone=UTC", "root", "");
-                       
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/easytasks?useTimezone=true&serverTimezone=UTC", "root", "");                      
             if (conn != null) {
- 
                 status = ("STATUS--->Conectado com sucesso!");
- 
             } else {
- 
-                status = ("STATUS--->Não foi possivel realizar conexão");
- 
-            }
-            
+                status = ("STATUS--->Não foi possivel realizar conexão"); 
+            }            
             return conn;
-        } catch (SQLException e) {
-            
-            throw new RuntimeException(e);
-            //System.out.println("Nao foi possivel conectar ao Banco de Dados.");
- 
-            //return null;
- 
+        } catch (SQLException e) {           
+            throw new RuntimeException(e); 
         }
- 
     }
     
-    public static String statusConection() {
- 
+    public String status() {
         return status;
- 
     }
   
-    public static boolean FecharConexao() {
+    public boolean fecharConexao() {
  
+        ConnectionBD con = new ConnectionBD();
         try {
  
-            Conexao.conectar().close();
+            con.conectar().close();
  
             return true;
  
@@ -71,10 +58,10 @@ public class Conexao {
         }
     }
  
-    public static Connection ReiniciarConexao() {
- 
-        FecharConexao();
-        return Conexao.conectar();
+    public static Connection reiniciarConexao() {
+        ConnectionBD con = new ConnectionBD();
+        con.fecharConexao();
+        return con.conectar();
  
     }
       
