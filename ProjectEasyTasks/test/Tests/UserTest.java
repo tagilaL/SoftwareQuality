@@ -5,6 +5,10 @@
  */
 package Tests;
 
+import ConexaoBanco.ConnectionBD;
+import Model.DAO.UserDAO;
+import Model.User;
+import junit.framework.*;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,9 +20,23 @@ import static org.junit.Assert.*;
  *
  * @author tagil
  */
-public class UserTest {
+public class UserTest extends TestCase{
     
-    public UserTest() {
+    private UserDAO dao = new UserDAO();
+    private User user = new User();
+    
+    public static void main(String[] args) {
+        ConnectionBD con = new ConnectionBD();
+        con.conectar();
+    }
+    @Test
+    public void testIsertUser() {
+        
+        user.setName("Usuario de Teste");
+        user.setEmail("usuario@gmail.com");
+        user.setPassword("usuario");
+        assertTrue(dao.insert(user));
+        
     }
     
     @BeforeClass

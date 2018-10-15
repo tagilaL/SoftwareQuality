@@ -25,7 +25,7 @@ public class UserDAO {
     
     public Boolean insert(User user){
         
-        String sql = "INSERT INTO usuario (nome, email, senha) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
         
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);

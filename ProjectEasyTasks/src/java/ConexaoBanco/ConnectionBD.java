@@ -18,7 +18,11 @@ public class ConnectionBD {
 
     public ConnectionBD() {
     }
-    
+    public static void main(String[] args) {
+        ConnectionBD con = new ConnectionBD();
+        con.conectar();
+        System.out.println(con.status());
+    }
     public Connection conectar() {
         
         Connection conn;
